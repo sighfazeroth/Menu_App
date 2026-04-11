@@ -1,10 +1,11 @@
 import { useState } from "react";
 import orangeImg from "./assets/orange.png";
+import cloudImg from "./assets/cloud.png";
 
 export default function App() {
   const menuItems = [
     { id: 1, name: "Beef Noodles", price: 14.99, image: orangeImg },
-    { id: 2, name: "Scallion Pancake", price: 6.5 },
+    { id: 2, name: "Scallion Pancake", price: 6.5, image: cloudImg },
     { id: 3, name: "Milk Tea", price: 4.75 },
   ];
 
