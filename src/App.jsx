@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Papa from "papaparse";
+import emailjs from "@emailjs/browser";
 
 export default function App() {
   const [menuItems, setMenuItems] = useState([]);
@@ -8,8 +9,11 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [submittingOrder, setSubmittingOrder] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState("");
 
   const chefStarImage = "/images/ChefStar.png";
+  const testCustomerName = "JZ";
 
   useEffect(() => {
     async function loadMenu() {
@@ -98,6 +102,54 @@ export default function App() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  async function submitOrder() {
+    if (cart.length === 0) {
+      setSubmitMessage("Cart is empty.");
+      return;
+    }
+
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setSubmitMessage("Missing EmailJS configuration.");
+      return;
+    }
+
+    const orderText = cart
+      .map(
+        (item) =>
+          `${item.name} | Qty: ${item.quantity} | Unit: $${item.price.toFixed(
+            2
+          )} | Subtotal: $${(item.price * item.quantity).toFixed(2)}`
+      )
+      .join("\n");
+
+    const templateParams = {
+      customer_name: testCustomerName,
+      order_text: orderText,
+      total_quantity: totalQuantity,
+      total: `$${totalPrice.toFixed(2)}`,
+      email: "tplentertainment@gmail.com",
+    };
+
+    try {
+      setSubmittingOrder(true);
+      setSubmitMessage("");
+
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
+
+      setSubmitMessage("Order submitted successfully.");
+      setCart([]);
+    } catch (error) {
+      console.error("Email send failed:", error);
+      setSubmitMessage("Failed to submit order.");
+    } finally {
+      setSubmittingOrder(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -544,6 +596,20 @@ export default function App() {
             </button>
           </div>
 
+          <div
+            style={{
+              marginBottom: "12px",
+              padding: "10px 12px",
+              background: "#f7f4ef",
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+              color: "#000",
+              fontSize: "14px",
+            }}
+          >
+            Customer: <strong>{testCustomerName}</strong>
+          </div>
+
           {cart.length === 0 ? (
             <p style={{ color: "#000" }}>Your cart is empty.</p>
           ) : (
@@ -610,7 +676,40 @@ export default function App() {
                 </div>
               ))}
 
-              <h3 style={{ color: "#000" }}>Total: ${totalPrice.toFixed(2)}</h3>
+              <div style={{ marginTop: "20px" }}>
+                <h3 style={{ color: "#000", marginBottom: "12px" }}>
+                  Total: ${totalPrice.toFixed(2)}
+                </h3>
+
+                <button
+                  onClick={submitOrder}
+                  disabled={submittingOrder}
+                  style={{
+                    width: "100%",
+                    padding: "12px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid #333",
+                    background: submittingOrder ? "#ddd" : "#222",
+                    color: "#fff",
+                    fontWeight: "700",
+                    cursor: submittingOrder ? "not-allowed" : "pointer",
+                  }}
+                >
+                  {submittingOrder ? "Submitting..." : "Submit Order"}
+                </button>
+
+                {submitMessage && (
+                  <p
+                    style={{
+                      marginTop: "10px",
+                      color: "#555",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {submitMessage}
+                  </p>
+                )}
+              </div>
             </>
           )}
         </div>
