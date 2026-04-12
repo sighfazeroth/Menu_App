@@ -1,0 +1,8 @@
+Dish_ID,Name,Cuisine,Tag,Chef_Recommend,Price ,Description,Image
+1,Tomahawk Steak,American,Beef|Grill|Torch,TRUE,249.99,Grilled and torched tomahawk teak served with Chimichurri,/images/TomahawkSteak.png
+2,Fries,American,Potato|Fry,FALSE,9.99,French Fries,/images/Fries.png
+3,Roast Duck,Beijing,Duck|Grill,TRUE,99.99,"Sliced roast duck served with thin pancakes, sweet bean sauce, cucumber, and scallions",/images/PekingDuck.png
+4,Braised Chinese Cabbage with Soup,Cantonese,Cabbage|Braised Soup,FALSE,9.99,"Cabbage in braised soup, usually chicken, duck, or beef",/images/BraisedCabbage.png
+5,Lemon Shredded Chicken,Cantonese,Chicken|Boil,TRUE,29.99,"Shredded chicken thigh served with sesame oil, lemons, onions, and spicy peanuts",/images/LemonShreddedChicken.png
+6,Concubine Chicken,Cantonese,Chicken|Boil,TRUE,29.99,Boiled chicken served with onion-ginger sauce,/images/ConcubineChicken.png
+7,Claypot Rice,Cantonese,Rice|Claypot,TRUE,29.99,"Steam rice in the claypot with variety of ingredients: beef, pork, chicken, etc.",/images/ClaypotRice.png
