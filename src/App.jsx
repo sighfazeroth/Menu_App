@@ -4,30 +4,47 @@ import emailjs from "@emailjs/browser";
 
 export default function App() {
   const [menuItems, setMenuItems] = useState([]);
+  const [invitationList, setInvitationList] = useState([]);
+
+  const [hasEntered, setHasEntered] = useState(false);
+
   const [selectedCuisine, setSelectedCuisine] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [submittingOrder, setSubmittingOrder] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
 
+  const [invitationCodeInput, setInvitationCodeInput] = useState("");
+  const [orderDate, setOrderDate] = useState("");
+  const [matchedCustomerName, setMatchedCustomerName] = useState("");
+  const [cartValidationMessage, setCartValidationMessage] = useState("");
+
   const chefStarImage = "/images/ChefStar.png";
-  const testCustomerName = "JZ";
+  const mainBackgroundImage = "/images/Main.png";
 
   useEffect(() => {
-    async function loadMenu() {
+    async function loadAllData() {
       try {
-        const response = await fetch("/Menu.csv");
-        const csvText = await response.text();
+        const [menuResponse, invitationResponse] = await Promise.all([
+          fetch("/Menu.csv"),
+          fetch("/Client_List.csv"),
+        ]);
 
-        const parsed = Papa.parse(csvText, {
+        const [menuCsvText, invitationCsvText] = await Promise.all([
+          menuResponse.text(),
+          invitationResponse.text(),
+        ]);
+
+        const parsedMenu = Papa.parse(menuCsvText, {
           header: true,
           skipEmptyLines: true,
           transformHeader: (header) => header.trim().replace(/^\uFEFF/, ""),
         });
 
-        const normalized = parsed.data.map((row) => ({
+        const normalizedMenu = parsedMenu.data.map((row) => ({
           id: Number(row.Dish_ID) || 0,
           name: row.Name?.trim() || "",
           cuisine: row.Cuisine?.trim() || "",
@@ -41,15 +58,27 @@ export default function App() {
           image: row.Image?.trim() || "",
         }));
 
-        setMenuItems(normalized);
+        const parsedInvitations = Papa.parse(invitationCsvText, {
+          header: true,
+          skipEmptyLines: true,
+          transformHeader: (header) => header.trim().replace(/^\uFEFF/, ""),
+        });
+
+        const normalizedInvitations = parsedInvitations.data.map((row) => ({
+          invitationCode: String(row.Invitation_Code || "").trim(),
+          clientName: String(row.Client_Name || "").trim(),
+        }));
+
+        setMenuItems(normalizedMenu);
+        setInvitationList(normalizedInvitations);
       } catch (error) {
-        console.error("Failed to load Menu.csv:", error);
+        console.error("Failed to load CSV files:", error);
       } finally {
         setLoading(false);
       }
     }
 
-    loadMenu();
+    loadAllData();
   }, []);
 
   const cuisines = useMemo(() => {
@@ -97,6 +126,42 @@ export default function App() {
     );
   }
 
+  function isValidDateMMDDYYYY(value) {
+    const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+    return regex.test(value);
+  }
+
+  function validateOrderAccess() {
+    const cleanCode = invitationCodeInput.trim();
+    const cleanDate = orderDate.trim();
+
+    if (!cleanCode) {
+      setCartValidationMessage("Please enter invitation code.");
+      setMatchedCustomerName("");
+      return null;
+    }
+
+    if (!isValidDateMMDDYYYY(cleanDate)) {
+      setCartValidationMessage("Please enter date in mm/dd/yyyy format.");
+      setMatchedCustomerName("");
+      return null;
+    }
+
+    const matchedClient = invitationList.find(
+      (row) => row.invitationCode === cleanCode
+    );
+
+    if (!matchedClient) {
+      setCartValidationMessage("Wrong Code");
+      setMatchedCustomerName("");
+      return null;
+    }
+
+    setCartValidationMessage("");
+    setMatchedCustomerName(matchedClient.clientName);
+    return matchedClient.clientName;
+  }
+
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -106,6 +171,12 @@ export default function App() {
   async function submitOrder() {
     if (cart.length === 0) {
       setSubmitMessage("Cart is empty.");
+      return;
+    }
+
+    const customerName = validateOrderAccess();
+    if (!customerName) {
+      setSubmitMessage("");
       return;
     }
 
@@ -128,7 +199,9 @@ export default function App() {
       .join("\n");
 
     const templateParams = {
-      customer_name: testCustomerName,
+      customer_name: customerName,
+      invitation_code: invitationCodeInput.trim(),
+      order_date: orderDate.trim(),
       order_text: orderText,
       total_quantity: totalQuantity,
       total: `$${totalPrice.toFixed(2)}`,
@@ -165,6 +238,46 @@ export default function App() {
     );
   }
 
+  if (!hasEntered) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundImage: `url(${mainBackgroundImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          position: "relative",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: "24px",
+            right: "24px",
+          }}
+        >
+          <button
+            onClick={() => setHasEntered(true)}
+            style={{
+              padding: "12px 22px",
+              borderRadius: "10px",
+              border: "1px solid #222",
+              background: "rgba(255,255,255,0.92)",
+              color: "#000",
+              fontWeight: "700",
+              fontSize: "16px",
+              cursor: "pointer",
+            }}
+          >
+            Enter
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -197,20 +310,37 @@ export default function App() {
           风满楼
         </h1>
 
-        <button
-          onClick={() => setShowCart(!showCart)}
-          style={{
-            padding: "10px 16px",
-            borderRadius: "8px",
-            border: "1px solid #333",
-            background: "#fff",
-            cursor: "pointer",
-            fontWeight: "600",
-            color: "#000",
-          }}
-        >
-          Cart ({totalQuantity})
-        </button>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <button
+            onClick={() => setHasEntered(false)}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "8px",
+              border: "1px solid #333",
+              background: "#fff",
+              cursor: "pointer",
+              fontWeight: "600",
+              color: "#000",
+            }}
+          >
+            Home
+          </button>
+
+          <button
+            onClick={() => setShowCart(!showCart)}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "8px",
+              border: "1px solid #333",
+              background: "#fff",
+              cursor: "pointer",
+              fontWeight: "600",
+              color: "#000",
+            }}
+          >
+            Cart ({totalQuantity})
+          </button>
+        </div>
       </div>
 
       <div
@@ -349,7 +479,7 @@ export default function App() {
         >
           <div
             style={{
-              marginBottom: "20px",
+              marginBottom: "12px",
               textAlign: "center",
               color: "#7b8798",
               fontSize: "18px",
@@ -358,6 +488,20 @@ export default function App() {
             Selected: {selectedCuisine || "All Cuisines"} /{" "}
             {selectedTag || "All Tags"}
           </div>
+
+          {matchedCustomerName && (
+            <div
+              style={{
+                marginBottom: "18px",
+                textAlign: "center",
+                color: "#555",
+                fontSize: "14px",
+              }}
+            >
+              Client: <strong>{matchedCustomerName}</strong> | Date:{" "}
+              <strong>{orderDate}</strong>
+            </div>
+          )}
 
           {filteredItems.length === 0 ? (
             <p style={{ color: "#000" }}>No dishes found.</p>
@@ -399,11 +543,7 @@ export default function App() {
                     />
                   </div>
 
-                  <div
-                    style={{
-                      textAlign: "left",
-                    }}
-                  >
+                  <div style={{ textAlign: "left" }}>
                     <div
                       style={{
                         display: "flex",
@@ -412,12 +552,7 @@ export default function App() {
                         marginBottom: "10px",
                       }}
                     >
-                      <div
-                        style={{
-                          textAlign: "left",
-                          flex: 1,
-                        }}
-                      >
+                      <div style={{ textAlign: "left", flex: 1 }}>
                         <h2
                           style={{
                             margin: "0 0 6px 0",
@@ -596,20 +731,6 @@ export default function App() {
             </button>
           </div>
 
-          <div
-            style={{
-              marginBottom: "12px",
-              padding: "10px 12px",
-              background: "#f7f4ef",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              color: "#000",
-              fontSize: "14px",
-            }}
-          >
-            Customer: <strong>{testCustomerName}</strong>
-          </div>
-
           {cart.length === 0 ? (
             <p style={{ color: "#000" }}>Your cart is empty.</p>
           ) : (
@@ -675,6 +796,108 @@ export default function App() {
                   </div>
                 </div>
               ))}
+
+              <div
+                style={{
+                  marginBottom: "12px",
+                  padding: "10px 12px",
+                  background: "#f7f4ef",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  color: "#000",
+                  fontSize: "14px",
+                  lineHeight: 1.6,
+                }}
+              >
+                <div style={{ marginBottom: "10px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "6px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Invitation Code
+                  </label>
+                  <input
+                    type="text"
+                    value={invitationCodeInput}
+                    onChange={(e) => setInvitationCodeInput(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: "8px",
+                      border: "1px solid #bbb",
+                      fontSize: "14px",
+                      boxSizing: "border-box",
+                      color: "#000",
+                      background: "#fff",
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: "10px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "6px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    Date
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="mm/dd/yyyy"
+                    value={orderDate}
+                    onChange={(e) => setOrderDate(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: "8px",
+                      border: "1px solid #bbb",
+                      fontSize: "14px",
+                      boxSizing: "border-box",
+                      color: "#000",
+                      background: "#fff",
+                    }}
+                  />
+                </div>
+
+                <button
+                  onClick={validateOrderAccess}
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #333",
+                    background: "#fff",
+                    color: "#000",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                  }}
+                >
+                  Validate
+                </button>
+
+                {matchedCustomerName && (
+                  <div style={{ marginTop: "10px", color: "#000" }}>
+                    Client: <strong>{matchedCustomerName}</strong>
+                  </div>
+                )}
+
+                {cartValidationMessage && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      color: "#b00020",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {cartValidationMessage}
+                  </div>
+                )}
+              </div>
 
               <div style={{ marginTop: "20px" }}>
                 <h3 style={{ color: "#000", marginBottom: "12px" }}>

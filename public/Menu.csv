@@ -1,8 +1,31 @@
 Dish_ID,Name,Cuisine,Tag,Chef_Recommend,Price ,Description,Image
-1,Tomahawk Steak,American,Beef|Grill|Torch,TRUE,249.99,Grilled and torched tomahawk teak served with Chimichurri,/images/TomahawkSteak.png
-2,Fries,American,Potato|Fry,FALSE,9.99,French Fries,/images/Fries.png
-3,Roast Duck,Beijing,Duck|Grill,TRUE,99.99,"Sliced roast duck served with thin pancakes, sweet bean sauce, cucumber, and scallions",/images/PekingDuck.png
-4,Braised Chinese Cabbage with Soup,Cantonese,Cabbage|Braised Soup,FALSE,9.99,"Cabbage in braised soup, usually chicken, duck, or beef",/images/BraisedCabbage.png
-5,Lemon Shredded Chicken,Cantonese,Chicken|Boil,TRUE,29.99,"Shredded chicken thigh served with sesame oil, lemons, onions, and spicy peanuts",/images/LemonShreddedChicken.png
-6,Concubine Chicken,Cantonese,Chicken|Boil,TRUE,29.99,Boiled chicken served with onion-ginger sauce,/images/ConcubineChicken.png
-7,Claypot Rice,Cantonese,Rice|Claypot,TRUE,29.99,"Steam rice in the claypot with variety of ingredients: beef, pork, chicken, etc.",/images/ClaypotRice.png
+1,Tomahawk Steak,Pan-American,Beef|Grill,TRUE,249.99,Grilled and torched tomahawk teak served with Chimichurri,/images/TomahawkSteak.png
+2,Torched Steak,Pan-American,Beef|Grill,TRUE,29.99,Grilled and torched USDA Prime steak,/images/TorchedSteak.png
+3,Fries,American,Potato|Fry,FALSE,9.99,French Fries,/images/Fries.png
+4,Garlic Pork Rib,Shanghainese,Pork|Fry,TRUE,29.99,Short pork rib deep fried with garlic,/images/GarlicPorkRib.png
+5,Marinaded Pork,Shanghainese,Pork|Rice Wine ,FALSE,19.99,Pork marinaded in rice wine (zao lu),/images/MarinadedPork.png
+6,Braised Chinese Cabbage with Soup,Cantonese,Cabbage|Braised Soup,FALSE,9.99,"Cabbage in braised soup, usually chicken, duck, or beef",/images/BraisedCabbage.png
+7,Lemon Shredded Chicken,Cantonese,Chicken|Boil,TRUE,29.99,"Shredded chicken thigh served with sesame oil, lemons, onions, and spicy peanuts",/images/LemonShreddedChicken.png
+8,Concubine Chicken,Cantonese,Chicken|Boil,TRUE,29.99,Boiled chicken served with onion-ginger sauce,/images/ConcubineChicken.png
+9,Claypot Rice,Cantonese,Rice|Claypot,TRUE,29.99,"Steam rice in the claypot with variety of ingredients: beef, pork, chicken, etc.",/images/ClaypotRice.png
+10,Roast Duck,Beijing,Duck|Grill,TRUE,99.99,"Sliced roast duck served with thin pancakes, sweet bean sauce, cucumber, and scallions",/images/PekingDuck.png
+11,Steamed Fish,Pan-Chinese,Fish|Steam,TRUE,29.99,"Steamed black bass served with Chef's sauce and lemon, non-spicy",/images/SteamedFish.png
+12,Chicken Soup,Pan-Chinese,Chicken|Soup,FALSE,29.99,Soup with quarter chicken and variety of ingredients,/images/ChickenSoup.png
+13,Fried Duck Tongue,Pan-Chinese,Duck Tongue|Fry,FALSE,19.99,Crispy fried duck tongue served with tomato sauce,/images/FriedDuckTongue.png
+14,Coconut Jelley,Pan-Chinese,Coconut|Desert,TRUE,9.99,Coconut Jelley served with berries,/images/CoconutJelley.png
+15,Cold Tofu,Japanese,Tofu|Salad,FALSE,9.99,Tofu served with soy sauce and vinegar,/images/ColdTofu.png
+16,Tuna Tataki,Japanese,Fish|Sashimi,FALSE,29.99,Semi-raw tuna served with sasame sauce,/images/TunaTataki.png
+17,Chawanmushi,Japanese,Egg|Steam,FALSE,19.99,Steamed egg with unagi and salmon egg,/images/Chawanmushi.png
+18,Cod Soup,Japanese,Fish|Soup,FALSE,19.99,Black cod cooked in creamy dashi broth,/images/CodSoup.png
+19,Mentaiko Squid Ink Pasta,Japanese,Mentaiko|Pasta,FALSE,19.99,Squid ink pasta served with cheezy mentaiko sauce,/images/MentaikoSquidInkPasta.png
+20,Breakfast Bento,Japanese,Fish|Salad,FALSE,19.99,"Bento box with salmon, salad, egg, and toast, protein may vary",/images/BreakfastBento.png
+21,Breakfast Bento,Japanese,Pork|Fish,FALSE,29.99,Bento box with two protein and salad,/images/BreakfastBento.png
+22,Bibimbap,Korean,Rice|Claypot,FALSE,29.99,Korean spicy claypot rice,/images/Bibimbap.png
+23,Pan Seared Foie Gras,French,Foie Gras,TRUE,29.99,Fried Foie Gras served with wine sauce,/images/PanSearedFoieGras.png
+24,Foie Gras Over Rice,French,Foie Gras,FALSE,29.99,Fried Foie Gras over rice served with soy sauce,/images/FoieGrasOverRice.png
+25,Pan Fried Steak,French,Beef|Fry,TRUE,29.99,Pan fried USDA Prime steak with garlic and rosemary,/images/PanFriedSteak.png
+26,Beef Bourguignon ,French,Beef|Braise,FALSE,39.99,Beef Stew/Braised Beef in Red Wine,/images/BeefBourguignon.png
+27,Cream Vegitable Soup,French,Soup,TRUE,19.99,Cauliflower and other vegitable cooked in ox tail broth,/images/CreamVegiSoup.png
+28,Creme Brulee,French,Egg|Desert,TRUE,9.99,Egg creme brulee with vanilla extract,/images/CremeBrulee.png
+29,Brunch French Toast,French,Bread|Fruit,TRUE,9.99,French toast served with variety of fruits,/images/BrunchFrenchToast.png
+30,Spaghetti Bolognese,Italian,Beef|Spaghetti,TRUE,19.99,Spaghetti in Bolognese style,/images/SpaghettiBolognese.png
