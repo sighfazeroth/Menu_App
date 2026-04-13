@@ -9,7 +9,7 @@ export default function App() {
   const [hasEntered, setHasEntered] = useState(false);
 
   const [selectedCuisine, setSelectedCuisine] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedIngredient, setSelectedIngredient] = useState("");
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
 
@@ -62,6 +62,7 @@ export default function App() {
           id: Number(row.Dish_ID) || 0,
           name: row.Name?.trim() || "",
           cuisine: row.Cuisine?.trim() || "",
+          ingredient: row.Ingredient?.trim() || "",
           tags: row.Tag
             ? row.Tag.split("|").map((tag) => tag.trim()).filter(Boolean)
             : [],
@@ -96,21 +97,22 @@ export default function App() {
   }, []);
 
   const cuisines = useMemo(() => {
-    return [...new Set(menuItems.map((item) => item.cuisine))].sort();
+    return [...new Set(menuItems.map((item) => item.cuisine).filter(Boolean))].sort();
   }, [menuItems]);
 
-  const tags = useMemo(() => {
-    return [...new Set(menuItems.flatMap((item) => item.tags))].sort();
+  const ingredients = useMemo(() => {
+    return [...new Set(menuItems.map((item) => item.ingredient).filter(Boolean))].sort();
   }, [menuItems]);
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
       const cuisineMatch =
         !selectedCuisine || item.cuisine === selectedCuisine;
-      const tagMatch = !selectedTag || item.tags.includes(selectedTag);
-      return cuisineMatch && tagMatch;
+      const ingredientMatch =
+        !selectedIngredient || item.ingredient === selectedIngredient;
+      return cuisineMatch && ingredientMatch;
     });
-  }, [menuItems, selectedCuisine, selectedTag]);
+  }, [menuItems, selectedCuisine, selectedIngredient]);
 
   function addToCart(item) {
     setCart((current) => {
@@ -204,12 +206,7 @@ export default function App() {
     }
 
     const orderText = cart
-      .map(
-        (item) =>
-          `${item.name} | Qty: ${item.quantity} | Unit: $${item.price.toFixed(
-            2
-          )} | Subtotal: $${(item.price * item.quantity).toFixed(2)}`
-      )
+      .map((item) => `${item.name} | Qty: ${item.quantity}`)
       .join("\n");
 
     const templateParams = {
@@ -362,7 +359,7 @@ export default function App() {
       <div
         style={{
           display: isMobile ? "block" : "grid",
-          gridTemplateColumns: isTablet ? "130px 150px 1fr" : "120px 140px 1fr",
+          gridTemplateColumns: isTablet ? "110px 130px 1fr" : "100px 120px 1fr",
           height: isMobile ? "auto" : "calc(100vh - 72px)",
         }}
       >
@@ -370,7 +367,7 @@ export default function App() {
           style={{
             borderRight: isMobile ? "none" : "1px solid #ddd",
             borderBottom: isMobile ? "1px solid #ddd" : "none",
-            padding: "14px 10px",
+            padding: "14px 8px",
             overflowY: isMobile ? "visible" : "auto",
             overflowX: isMobile ? "auto" : "visible",
             background: "#fff",
@@ -406,7 +403,7 @@ export default function App() {
           style={{
             borderRight: isMobile ? "none" : "1px solid #ddd",
             borderBottom: isMobile ? "1px solid #ddd" : "none",
-            padding: "14px 10px",
+            padding: "14px 8px",
             overflowY: isMobile ? "visible" : "auto",
             overflowX: isMobile ? "auto" : "visible",
             background: "#fff",
@@ -415,24 +412,24 @@ export default function App() {
           }}
         >
           <h3 style={{ marginTop: 0, color: "#5e7089", fontSize: "18px" }}>
-            Tag
+            Ingredient
           </h3>
 
           <div style={{ display: isMobile ? "flex" : "block", gap: "8px" }}>
             <button
-              onClick={() => setSelectedTag("")}
-              style={filterButtonStyle(selectedTag === "", isMobile)}
+              onClick={() => setSelectedIngredient("")}
+              style={filterButtonStyle(selectedIngredient === "", isMobile)}
             >
               All
             </button>
 
-            {tags.map((tag) => (
+            {ingredients.map((ingredient) => (
               <button
-                key={tag}
-                onClick={() => setSelectedTag(tag)}
-                style={filterButtonStyle(selectedTag === tag, isMobile)}
+                key={ingredient}
+                onClick={() => setSelectedIngredient(ingredient)}
+                style={filterButtonStyle(selectedIngredient === ingredient, isMobile)}
               >
-                {tag}
+                {ingredient}
               </button>
             ))}
           </div>
@@ -452,7 +449,8 @@ export default function App() {
               fontSize: isMobile ? "15px" : "18px",
             }}
           >
-            Selected: {selectedCuisine || "All Cuisines"} / {selectedTag || "All Tags"}
+            Selected: {selectedCuisine || "All Cuisines"} /{" "}
+            {selectedIngredient || "All Ingredients"}
           </div>
 
           {matchedCustomerName && (
@@ -557,36 +555,19 @@ export default function App() {
                         </div>
                       </div>
 
-                      <div
-                        style={{
-                          textAlign: "right",
-                          minWidth: isMobile ? "90px" : "110px",
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontWeight: "700",
-                            fontSize: isMobile ? "18px" : "20px",
-                            color: "#7b8798",
-                          }}
-                        >
-                          ${item.price.toFixed(2)}
+                      {item.chefRecommend && (
+                        <div style={{ marginTop: "4px" }}>
+                          <img
+                            src={chefStarImage}
+                            alt="Chef Recommend"
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              objectFit: "contain",
+                            }}
+                          />
                         </div>
-
-                        {item.chefRecommend && (
-                          <div style={{ marginTop: "8px" }}>
-                            <img
-                              src={chefStarImage}
-                              alt="Chef Recommend"
-                              style={{
-                                width: "28px",
-                                height: "28px",
-                                objectFit: "contain",
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      )}
                     </div>
 
                     <p
@@ -717,7 +698,7 @@ export default function App() {
                       marginBottom: "8px",
                     }}
                   >
-                    ${item.price.toFixed(2)} × {item.quantity}
+                    Qty: {item.quantity}
                   </div>
 
                   <div style={{ display: "flex", gap: "8px" }}>
@@ -823,10 +804,6 @@ export default function App() {
               </div>
 
               <div style={{ marginTop: "20px" }}>
-                <h3 style={{ color: "#000", marginBottom: "12px" }}>
-                  Total: ${totalPrice.toFixed(2)}
-                </h3>
-
                 <button
                   onClick={submitOrder}
                   disabled={submittingOrder}
