@@ -15,17 +15,24 @@ Dish_ID,Name,Cuisine,Tag,Chef_Recommend,Price ,Description,Image
 14,Coconut Jelley,Pan-Chinese,Coconut|Desert,TRUE,9.99,Coconut Jelley served with berries,/images/CoconutJelley.png
 15,Cold Tofu,Japanese,Tofu|Salad,FALSE,9.99,Tofu served with soy sauce and vinegar,/images/ColdTofu.png
 16,Tuna Tataki,Japanese,Fish|Sashimi,FALSE,29.99,Semi-raw tuna served with sasame sauce,/images/TunaTataki.png
-17,Chawanmushi,Japanese,Egg|Steam,FALSE,19.99,Steamed egg with unagi and salmon egg,/images/Chawanmushi.png
-18,Cod Soup,Japanese,Fish|Soup,FALSE,19.99,Black cod cooked in creamy dashi broth,/images/CodSoup.png
-19,Mentaiko Squid Ink Pasta,Japanese,Mentaiko|Pasta,FALSE,19.99,Squid ink pasta served with cheezy mentaiko sauce,/images/MentaikoSquidInkPasta.png
-20,Breakfast Bento,Japanese,Fish|Salad,FALSE,19.99,"Bento box with salmon, salad, egg, and toast, protein may vary",/images/BreakfastBento.png
-21,Breakfast Bento,Japanese,Pork|Fish,FALSE,29.99,Bento box with two protein and salad,/images/BreakfastBento.png
-22,Bibimbap,Korean,Rice|Claypot,FALSE,29.99,Korean spicy claypot rice,/images/Bibimbap.png
-23,Pan Seared Foie Gras,French,Foie Gras,TRUE,29.99,Fried Foie Gras served with wine sauce,/images/PanSearedFoieGras.png
-24,Foie Gras Over Rice,French,Foie Gras,FALSE,29.99,Fried Foie Gras over rice served with soy sauce,/images/FoieGrasOverRice.png
-25,Pan Fried Steak,French,Beef|Fry,TRUE,29.99,Pan fried USDA Prime steak with garlic and rosemary,/images/PanFriedSteak.png
-26,Beef Bourguignon ,French,Beef|Braise,FALSE,39.99,Beef Stew/Braised Beef in Red Wine,/images/BeefBourguignon.png
-27,Cream Vegitable Soup,French,Soup,TRUE,19.99,Cauliflower and other vegitable cooked in ox tail broth,/images/CreamVegiSoup.png
-28,Creme Brulee,French,Egg|Desert,TRUE,9.99,Egg creme brulee with vanilla extract,/images/CremeBrulee.png
-29,Brunch French Toast,French,Bread|Fruit,TRUE,9.99,French toast served with variety of fruits,/images/BrunchFrenchToast.png
-30,Spaghetti Bolognese,Italian,Beef|Spaghetti,TRUE,19.99,Spaghetti in Bolognese style,/images/SpaghettiBolognese.png
+17,Scallop Sashimi,Japanese,Fish|Sashimi,FALSE,9.99,Raw scallop and unagi served with soy sauce,/images/ScallopSashimi.png
+18,Sashimi Boat,Japanese,Fish|Sashimi,TRUE,149.99,Variety of sashimi,/images/SashimiBoat.png
+19,Chawanmushi,Japanese,Egg|Steam,FALSE,19.99,Steamed egg with unagi and salmon egg,/images/Chawanmushi.png
+20,Cod Soup,Japanese,Fish|Soup,FALSE,19.99,Black cod cooked in creamy dashi broth,/images/CodSoup.png
+21,Mentaiko Squid Ink Pasta,Japanese,Mentaiko|Pasta,FALSE,19.99,Squid ink pasta served with cheezy mentaiko sauce,/images/MentaikoSquidInkPasta.png
+22,PorkCurryOverRice,Japanese,Pork|Curry,FALSE,19.99,"Crispy, deep-fried breaded pork cutlet served over rice with curry sauce",/images/PorkCurryOverRice.png
+23,Breakfast Bento,Japanese,Fish|Salad,FALSE,19.99,"Bento box with salmon, salad, egg, and toast, protein may vary",/images/BreakfastBento.png
+24,Lunch Bento,Japanese,Pork|Fish,FALSE,29.99,Bento box with two protein and salad,/images/LunchBento.png
+25,Bibimbap,Korean,Rice|Claypot,FALSE,29.99,Korean spicy claypot rice,/images/Bibimbap.png
+26,Pan Seared Foie Gras,French,Foie Gras,TRUE,29.99,Fried Foie Gras served with wine sauce,/images/PanSearedFoieGras.png
+27,Foie Gras Over Rice,French,Foie Gras,FALSE,29.99,Fried Foie Gras over rice served with soy sauce,/images/FoieGrasOverRice.png
+28,Pan Fried Steak,French,Beef|Fry,TRUE,29.99,Pan fried USDA Prime steak with garlic and rosemary,/images/PanFriedSteak.png
+29,Beef Bourguignon ,French,Beef|Braise,FALSE,39.99,Beef Stew/Braised Beef in Red Wine,/images/BeefBourguignon.png
+30,Bone Marrow,French,Beef|Grill,FALSE,9.99,Grilled bone marrow served with crispy rice crackers,/images/BoneMarrow.png
+31,Duck Confit,French,Duck,TRUE,29.99,"Salt-cured, slow-cooked duck leg/breast that results in exceptionally tender meat and perfectly crispy, golden-brown skin",/images/DuckConfit.png
+32,Escargot,French,Escargot,TRUE,29.99,French snails paired with classic garlic sauce,/images/Escargot.png
+33,Cream Vegitable Soup,French,Soup,TRUE,19.99,Cauliflower and other vegitable cooked in ox tail broth,/images/CreamVegiSoup.png
+34,Cream Mushroom Soup,French,Soup,TRUE,9.99,Mushroom soup with truffle,/images/CreamMushroomSoup.png
+35,Creme Brulee,French,Egg|Desert,TRUE,9.99,Egg creme brulee with vanilla extract,/images/CremeBrulee.png
+36,Brunch French Toast,French,Bread|Fruit,TRUE,9.99,French toast served with variety of fruits,/images/BrunchFrenchToast.png
+37,Spaghetti Bolognese,Italian,Beef|Spaghetti,TRUE,19.99,Spaghetti in Bolognese style,/images/SpaghettiBolognese.png

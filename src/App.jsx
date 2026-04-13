@@ -321,7 +321,7 @@ export default function App() {
             letterSpacing: isMobile ? "1px" : "2px",
           }}
         >
-          风满楼
+          ChezTonini
         </h1>
 
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
