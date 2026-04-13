@@ -31,8 +31,8 @@ Dish_ID,Name,Cuisine,Ingredient,Tag,Chef_Recommend,Price ,Description,Image
 30,Bone Marrow,French,Beef,Side|Grill,FALSE,9.99,Grilled bone marrow served with crispy rice crackers,/images/BoneMarrow.png
 31,Duck Confit,French,Duck,Entree|Duck,TRUE,29.99,"Salt-cured, slow-cooked duck leg/breast that results in exceptionally tender meat and perfectly crispy, golden-brown skin",/images/DuckConfit.png
 32,Escargot,French,Snail,Side|Escargot,TRUE,29.99,French snails paired with classic garlic sauce,/images/Escargot.png
-33,Cream Vegitable Soup,French,Soup,Soup,TRUE,19.99,Cauliflower and other vegitable cooked in ox tail broth,/images/CreamVegiSoup.png
-34,Cream Mushroom Soup,French,Soup,Soup,TRUE,9.99,Mushroom soup with truffle,/images/CreamMushroomSoup.png
+33,Cream Vegitable Soup,French,Cauliflower,Soup,TRUE,19.99,Cauliflower and other vegitable cooked in ox tail broth,/images/CreamVegiSoup.png
+34,Cream Mushroom Soup,French,Mushroom,Soup,TRUE,9.99,Mushroom soup with truffle,/images/CreamMushroomSoup.png
 35,Creme Brulee,French,Egg,Desert,TRUE,9.99,Egg creme brulee with vanilla extract,/images/CremeBrulee.png
 36,Brunch French Toast,French,Fruit,Entree|Breakfast,TRUE,9.99,French toast served with variety of fruits,/images/BrunchFrenchToast.png
 37,Spaghetti Bolognese,Italian,Beef,Entree|Spaghetti,TRUE,19.99,Spaghetti in Bolognese style,/images/SpaghettiBolognese.png
