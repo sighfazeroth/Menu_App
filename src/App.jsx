@@ -4,7 +4,7 @@ import emailjs from "@emailjs/browser";
 
 export default function App() {
   const [menuItems, setMenuItems] = useState([]);
-  const [invitationList, setInvitationList] = useState([]);
+  const [clientList, setClientList] = useState([]);
 
   const [hasEntered, setHasEntered] = useState(false);
 
@@ -22,20 +22,34 @@ export default function App() {
   const [matchedCustomerName, setMatchedCustomerName] = useState("");
   const [cartValidationMessage, setCartValidationMessage] = useState("");
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   const chefStarImage = "/images/ChefStar.png";
   const mainBackgroundImage = "/images/Main.png";
 
   useEffect(() => {
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 768;
+  const isTablet = windowWidth > 768 && windowWidth <= 1100;
+
+  useEffect(() => {
     async function loadAllData() {
       try {
-        const [menuResponse, invitationResponse] = await Promise.all([
+        const [menuResponse, clientResponse] = await Promise.all([
           fetch("/Menu.csv"),
           fetch("/Client_List.csv"),
         ]);
 
-        const [menuCsvText, invitationCsvText] = await Promise.all([
+        const [menuCsvText, clientCsvText] = await Promise.all([
           menuResponse.text(),
-          invitationResponse.text(),
+          clientResponse.text(),
         ]);
 
         const parsedMenu = Papa.parse(menuCsvText, {
@@ -58,19 +72,19 @@ export default function App() {
           image: row.Image?.trim() || "",
         }));
 
-        const parsedInvitations = Papa.parse(invitationCsvText, {
+        const parsedClients = Papa.parse(clientCsvText, {
           header: true,
           skipEmptyLines: true,
           transformHeader: (header) => header.trim().replace(/^\uFEFF/, ""),
         });
 
-        const normalizedInvitations = parsedInvitations.data.map((row) => ({
+        const normalizedClients = parsedClients.data.map((row) => ({
           invitationCode: String(row.Invitation_Code || "").trim(),
           clientName: String(row.Client_Name || "").trim(),
         }));
 
         setMenuItems(normalizedMenu);
-        setInvitationList(normalizedInvitations);
+        setClientList(normalizedClients);
       } catch (error) {
         console.error("Failed to load CSV files:", error);
       } finally {
@@ -147,7 +161,7 @@ export default function App() {
       return null;
     }
 
-    const matchedClient = invitationList.find(
+    const matchedClient = clientList.find(
       (row) => row.invitationCode === cleanCode
     );
 
@@ -226,13 +240,7 @@ export default function App() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          padding: "24px",
-          fontFamily: "Arial, sans-serif",
-          color: "#000",
-        }}
-      >
+      <div style={{ padding: "24px", fontFamily: "Arial, sans-serif", color: "#000" }}>
         Loading menu...
       </div>
     );
@@ -244,11 +252,13 @@ export default function App() {
         style={{
           minHeight: "100vh",
           backgroundImage: `url(${mainBackgroundImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundSize: "contain",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
+          backgroundColor: "#000",
           position: "relative",
           fontFamily: "Arial, sans-serif",
+          overflow: "hidden",
         }}
       >
         <div
@@ -256,6 +266,7 @@ export default function App() {
             position: "absolute",
             top: "24px",
             right: "24px",
+            zIndex: 2,
           }}
         >
           <button
@@ -293,34 +304,38 @@ export default function App() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "0 20px",
+          padding: isMobile ? "0 12px" : "0 20px",
           borderBottom: "1px solid #ddd",
           background: "#fff",
+          position: "sticky",
+          top: 0,
+          zIndex: 20,
         }}
       >
         <h1
           style={{
             margin: 0,
             color: "#000",
-            fontSize: "36px",
+            fontSize: isMobile ? "26px" : "36px",
             fontWeight: "700",
-            letterSpacing: "2px",
+            letterSpacing: isMobile ? "1px" : "2px",
           }}
         >
           风满楼
         </h1>
 
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <button
             onClick={() => setHasEntered(false)}
             style={{
-              padding: "10px 16px",
+              padding: isMobile ? "8px 12px" : "10px 16px",
               borderRadius: "8px",
               border: "1px solid #333",
               background: "#fff",
               cursor: "pointer",
               fontWeight: "600",
               color: "#000",
+              fontSize: isMobile ? "13px" : "14px",
             }}
           >
             Home
@@ -329,13 +344,14 @@ export default function App() {
           <button
             onClick={() => setShowCart(!showCart)}
             style={{
-              padding: "10px 16px",
+              padding: isMobile ? "8px 12px" : "10px 16px",
               borderRadius: "8px",
               border: "1px solid #333",
               background: "#fff",
               cursor: "pointer",
               fontWeight: "600",
               color: "#000",
+              fontSize: isMobile ? "13px" : "14px",
             }}
           >
             Cart ({totalQuantity})
@@ -345,136 +361,87 @@ export default function App() {
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "180px 210px 1fr",
-          height: "calc(100vh - 72px)",
+          display: isMobile ? "block" : "grid",
+          gridTemplateColumns: isTablet ? "130px 150px 1fr" : "120px 140px 1fr",
+          height: isMobile ? "auto" : "calc(100vh - 72px)",
         }}
       >
         <div
           style={{
-            borderRight: "1px solid #ddd",
-            padding: "18px 12px",
-            overflowY: "auto",
+            borderRight: isMobile ? "none" : "1px solid #ddd",
+            borderBottom: isMobile ? "1px solid #ddd" : "none",
+            padding: "14px 10px",
+            overflowY: isMobile ? "visible" : "auto",
+            overflowX: isMobile ? "auto" : "visible",
             background: "#fff",
             color: "#000",
+            whiteSpace: isMobile ? "nowrap" : "normal",
           }}
         >
-          <h3
-            style={{
-              marginTop: 0,
-              color: "#5e7089",
-              fontSize: "18px",
-            }}
-          >
+          <h3 style={{ marginTop: 0, color: "#5e7089", fontSize: "18px" }}>
             Cuisine
           </h3>
 
-          <button
-            onClick={() => setSelectedCuisine("")}
-            style={{
-              display: "block",
-              width: "100%",
-              marginBottom: "10px",
-              padding: "10px 12px",
-              borderRadius: "8px",
-              border: "1px solid #bbb",
-              background: selectedCuisine === "" ? "#ece5da" : "#fff",
-              cursor: "pointer",
-              textAlign: "left",
-              fontWeight: "600",
-              color: "#000",
-            }}
-          >
-            All
-          </button>
-
-          {cuisines.map((cuisine) => (
+          <div style={{ display: isMobile ? "flex" : "block", gap: "8px" }}>
             <button
-              key={cuisine}
-              onClick={() => setSelectedCuisine(cuisine)}
-              style={{
-                display: "block",
-                width: "100%",
-                marginBottom: "10px",
-                padding: "10px 12px",
-                borderRadius: "8px",
-                border: "1px solid #bbb",
-                background:
-                  selectedCuisine === cuisine ? "#ece5da" : "#fff",
-                cursor: "pointer",
-                textAlign: "left",
-                color: "#000",
-              }}
+              onClick={() => setSelectedCuisine("")}
+              style={filterButtonStyle(selectedCuisine === "", isMobile)}
             >
-              {cuisine}
+              All
             </button>
-          ))}
+
+            {cuisines.map((cuisine) => (
+              <button
+                key={cuisine}
+                onClick={() => setSelectedCuisine(cuisine)}
+                style={filterButtonStyle(selectedCuisine === cuisine, isMobile)}
+              >
+                {cuisine}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div
           style={{
-            borderRight: "1px solid #ddd",
-            padding: "18px 12px",
-            overflowY: "auto",
+            borderRight: isMobile ? "none" : "1px solid #ddd",
+            borderBottom: isMobile ? "1px solid #ddd" : "none",
+            padding: "14px 10px",
+            overflowY: isMobile ? "visible" : "auto",
+            overflowX: isMobile ? "auto" : "visible",
             background: "#fff",
             color: "#000",
+            whiteSpace: isMobile ? "nowrap" : "normal",
           }}
         >
-          <h3
-            style={{
-              marginTop: 0,
-              color: "#5e7089",
-              fontSize: "18px",
-            }}
-          >
+          <h3 style={{ marginTop: 0, color: "#5e7089", fontSize: "18px" }}>
             Tag
           </h3>
 
-          <button
-            onClick={() => setSelectedTag("")}
-            style={{
-              display: "block",
-              width: "100%",
-              marginBottom: "10px",
-              padding: "10px 12px",
-              borderRadius: "8px",
-              border: "1px solid #bbb",
-              background: selectedTag === "" ? "#ece5da" : "#fff",
-              cursor: "pointer",
-              textAlign: "left",
-              fontWeight: "600",
-              color: "#000",
-            }}
-          >
-            All
-          </button>
-
-          {tags.map((tag) => (
+          <div style={{ display: isMobile ? "flex" : "block", gap: "8px" }}>
             <button
-              key={tag}
-              onClick={() => setSelectedTag(tag)}
-              style={{
-                display: "block",
-                width: "100%",
-                marginBottom: "10px",
-                padding: "10px 12px",
-                borderRadius: "8px",
-                border: "1px solid #bbb",
-                background: selectedTag === tag ? "#ece5da" : "#fff",
-                cursor: "pointer",
-                textAlign: "left",
-                color: "#000",
-              }}
+              onClick={() => setSelectedTag("")}
+              style={filterButtonStyle(selectedTag === "", isMobile)}
             >
-              {tag}
+              All
             </button>
-          ))}
+
+            {tags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setSelectedTag(tag)}
+                style={filterButtonStyle(selectedTag === tag, isMobile)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div
           style={{
-            padding: "20px",
-            overflowY: "auto",
+            padding: isMobile ? "12px" : "20px",
+            overflowY: isMobile ? "visible" : "auto",
           }}
         >
           <div
@@ -482,11 +449,10 @@ export default function App() {
               marginBottom: "12px",
               textAlign: "center",
               color: "#7b8798",
-              fontSize: "18px",
+              fontSize: isMobile ? "15px" : "18px",
             }}
           >
-            Selected: {selectedCuisine || "All Cuisines"} /{" "}
-            {selectedTag || "All Tags"}
+            Selected: {selectedCuisine || "All Cuisines"} / {selectedTag || "All Tags"}
           </div>
 
           {matchedCustomerName && (
@@ -515,13 +481,13 @@ export default function App() {
                   key={item.id}
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "260px 1fr",
-                    gap: "20px",
+                    gridTemplateColumns: isMobile ? "1fr" : "220px 1fr",
+                    gap: "16px",
                     background: "#fff",
                     border: "1px solid #d7d2ca",
                     borderRadius: "16px",
                     padding: "16px",
-                    marginBottom: "20px",
+                    marginBottom: "18px",
                     boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
                     alignItems: "start",
                   }}
@@ -532,7 +498,7 @@ export default function App() {
                       alt={item.name}
                       style={{
                         width: "100%",
-                        height: "180px",
+                        height: isMobile ? "200px" : "180px",
                         objectFit: "cover",
                         borderRadius: "10px",
                         background: "#eee",
@@ -549,6 +515,7 @@ export default function App() {
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "flex-start",
+                        gap: "12px",
                         marginBottom: "10px",
                       }}
                     >
@@ -558,7 +525,7 @@ export default function App() {
                             margin: "0 0 6px 0",
                             color: "#000",
                             fontWeight: "700",
-                            fontSize: "28px",
+                            fontSize: isMobile ? "24px" : "28px",
                             textAlign: "left",
                           }}
                         >
@@ -583,6 +550,7 @@ export default function App() {
                             color: "#000",
                             marginBottom: "14px",
                             textAlign: "left",
+                            lineHeight: 1.5,
                           }}
                         >
                           {item.tags.join(" · ")}
@@ -592,13 +560,13 @@ export default function App() {
                       <div
                         style={{
                           textAlign: "right",
-                          minWidth: "110px",
+                          minWidth: isMobile ? "90px" : "110px",
                         }}
                       >
                         <div
                           style={{
                             fontWeight: "700",
-                            fontSize: "20px",
+                            fontSize: isMobile ? "18px" : "20px",
                             color: "#7b8798",
                           }}
                         >
@@ -644,15 +612,7 @@ export default function App() {
                       <button
                         onClick={() => changeQuantity(item.id, -1)}
                         disabled={quantity === 0}
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "4px",
-                          border: "1px solid #555",
-                          background: quantity === 0 ? "#ddd" : "#555",
-                          color: "#fff",
-                          cursor: quantity === 0 ? "not-allowed" : "pointer",
-                        }}
+                        style={qtyButtonStyle(quantity === 0)}
                       >
                         -
                       </button>
@@ -670,15 +630,7 @@ export default function App() {
 
                       <button
                         onClick={() => addToCart(item)}
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "4px",
-                          border: "1px solid #555",
-                          background: "#555",
-                          color: "#fff",
-                          cursor: "pointer",
-                        }}
+                        style={qtyButtonStyle(false)}
                       >
                         +
                       </button>
@@ -695,16 +647,17 @@ export default function App() {
         <div
           style={{
             position: "fixed",
-            top: 72,
+            top: isMobile ? 0 : 72,
             right: 0,
-            width: "340px",
-            height: "calc(100vh - 72px)",
+            width: isMobile ? "100vw" : "360px",
+            height: isMobile ? "100vh" : "calc(100vh - 72px)",
             background: "#fff",
-            borderLeft: "1px solid #ddd",
+            borderLeft: isMobile ? "none" : "1px solid #ddd",
             padding: "16px",
             overflowY: "auto",
             boxShadow: "-4px 0 12px rgba(0,0,0,0.08)",
             color: "#000",
+            zIndex: 50,
           }}
         >
           <div
@@ -713,6 +666,10 @@ export default function App() {
               justifyContent: "space-between",
               alignItems: "center",
               marginBottom: "16px",
+              position: "sticky",
+              top: 0,
+              background: "#fff",
+              paddingBottom: "8px",
             }}
           >
             <h2 style={{ margin: 0, color: "#000" }}>Cart</h2>
@@ -766,30 +723,14 @@ export default function App() {
                   <div style={{ display: "flex", gap: "8px" }}>
                     <button
                       onClick={() => changeQuantity(item.id, -1)}
-                      style={{
-                        width: "28px",
-                        height: "28px",
-                        borderRadius: "4px",
-                        border: "1px solid #555",
-                        background: "#555",
-                        color: "#fff",
-                        cursor: "pointer",
-                      }}
+                      style={cartButtonMiniStyle()}
                     >
                       -
                     </button>
 
                     <button
                       onClick={() => changeQuantity(item.id, 1)}
-                      style={{
-                        width: "28px",
-                        height: "28px",
-                        borderRadius: "4px",
-                        border: "1px solid #555",
-                        background: "#555",
-                        color: "#fff",
-                        cursor: "pointer",
-                      }}
+                      style={cartButtonMiniStyle()}
                     >
                       +
                     </button>
@@ -823,16 +764,7 @@ export default function App() {
                     type="text"
                     value={invitationCodeInput}
                     onChange={(e) => setInvitationCodeInput(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "10px 12px",
-                      borderRadius: "8px",
-                      border: "1px solid #bbb",
-                      fontSize: "14px",
-                      boxSizing: "border-box",
-                      color: "#000",
-                      background: "#fff",
-                    }}
+                    style={cartInputStyle()}
                   />
                 </div>
 
@@ -851,16 +783,7 @@ export default function App() {
                     placeholder="mm/dd/yyyy"
                     value={orderDate}
                     onChange={(e) => setOrderDate(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "10px 12px",
-                      borderRadius: "8px",
-                      border: "1px solid #bbb",
-                      fontSize: "14px",
-                      boxSizing: "border-box",
-                      color: "#000",
-                      background: "#fff",
-                    }}
+                    style={cartInputStyle()}
                   />
                 </div>
 
@@ -939,4 +862,59 @@ export default function App() {
       )}
     </div>
   );
+}
+
+function filterButtonStyle(active, isMobile) {
+  return {
+    display: isMobile ? "inline-block" : "block",
+    width: isMobile ? "auto" : "100%",
+    marginBottom: isMobile ? 0 : "10px",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #bbb",
+    background: active ? "#ece5da" : "#fff",
+    cursor: "pointer",
+    textAlign: "left",
+    fontWeight: active ? "600" : "400",
+    color: "#000",
+    whiteSpace: "nowrap",
+    flexShrink: 0,
+  };
+}
+
+function qtyButtonStyle(disabled) {
+  return {
+    width: "30px",
+    height: "30px",
+    borderRadius: "4px",
+    border: "1px solid #555",
+    background: disabled ? "#ddd" : "#555",
+    color: "#fff",
+    cursor: disabled ? "not-allowed" : "pointer",
+  };
+}
+
+function cartButtonMiniStyle() {
+  return {
+    width: "28px",
+    height: "28px",
+    borderRadius: "4px",
+    border: "1px solid #555",
+    background: "#555",
+    color: "#fff",
+    cursor: "pointer",
+  };
+}
+
+function cartInputStyle() {
+  return {
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: "8px",
+    border: "1px solid #bbb",
+    fontSize: "14px",
+    boxSizing: "border-box",
+    color: "#000",
+    background: "#fff",
+  };
 }
