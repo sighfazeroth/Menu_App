@@ -9,7 +9,7 @@ export default function App() {
   const [hasEntered, setHasEntered] = useState(false);
 
   const [selectedCuisine, setSelectedCuisine] = useState("");
-  const [selectedIngredient, setSelectedIngredient] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
 
@@ -62,7 +62,7 @@ export default function App() {
           id: Number(row.Dish_ID) || 0,
           name: row.Name?.trim() || "",
           cuisine: row.Cuisine?.trim() || "",
-          ingredient: row.Ingredient?.trim() || "",
+          menuSection: row.Menu_Section?.trim() || "",
           tags: row.Tag
             ? row.Tag.split("|").map((tag) => tag.trim()).filter(Boolean)
             : [],
@@ -100,19 +100,19 @@ export default function App() {
     return [...new Set(menuItems.map((item) => item.cuisine).filter(Boolean))].sort();
   }, [menuItems]);
 
-  const ingredients = useMemo(() => {
-    return [...new Set(menuItems.map((item) => item.ingredient).filter(Boolean))].sort();
+  const sections = useMemo(() => {
+    return [...new Set(menuItems.map((item) => item.menuSection).filter(Boolean))].sort();
   }, [menuItems]);
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
       const cuisineMatch =
         !selectedCuisine || item.cuisine === selectedCuisine;
-      const ingredientMatch =
-        !selectedIngredient || item.ingredient === selectedIngredient;
-      return cuisineMatch && ingredientMatch;
+      const sectionMatch =
+        !selectedSection || item.menuSection === selectedSection;
+      return cuisineMatch && sectionMatch;
     });
-  }, [menuItems, selectedCuisine, selectedIngredient]);
+  }, [menuItems, selectedCuisine, selectedSection]);
 
   function addToCart(item) {
     setCart((current) => {
@@ -412,24 +412,24 @@ export default function App() {
           }}
         >
           <h3 style={{ marginTop: 0, color: "#5e7089", fontSize: "18px" }}>
-            Ingredient
+            Section
           </h3>
 
           <div style={{ display: isMobile ? "flex" : "block", gap: "8px" }}>
             <button
-              onClick={() => setSelectedIngredient("")}
-              style={filterButtonStyle(selectedIngredient === "", isMobile)}
+              onClick={() => setSelectedSection("")}
+              style={filterButtonStyle(selectedSection === "", isMobile)}
             >
               All
             </button>
 
-            {ingredients.map((ingredient) => (
+            {sections.map((section) => (
               <button
-                key={ingredient}
-                onClick={() => setSelectedIngredient(ingredient)}
-                style={filterButtonStyle(selectedIngredient === ingredient, isMobile)}
+                key={section}
+                onClick={() => setSelectedSection(section)}
+                style={filterButtonStyle(selectedSection === section, isMobile)}
               >
-                {ingredient}
+                {section}
               </button>
             ))}
           </div>
@@ -450,7 +450,7 @@ export default function App() {
             }}
           >
             Selected: {selectedCuisine || "All Cuisines"} /{" "}
-            {selectedIngredient || "All Ingredients"}
+            {selectedSection || "All Sections"}
           </div>
 
           {matchedCustomerName && (
